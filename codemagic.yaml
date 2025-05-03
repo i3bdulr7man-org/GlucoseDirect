@@ -1,3 +1,27 @@
+workflows:
+  ios-build:
+    name: GlucoseDirect iOS Build
+    environment:
+      vars:
+        XCODE_WORKSPACE: "GlucoseDirect.xcworkspace"
+        XCODE_SCHEME: "GlucoseDirect"
+      xcode: latest
+    scripts:
+      - name: Install dependencies
+        script: |
+          gem install cocoapods
+          pod install
+      - name: Build iOS app
+        script: |
+          xcodebuild clean archive \
+          -workspace "$XCODE_WORKSPACE" \
+          -scheme "$XCODE_SCHEME" \
+          -sdk iphoneos \
+          -archivePath $HOME/build/GlucoseDirect.xcarchive \
+          CODE_SIGN_IDENTITY="iPhone Distribution" \
+          PROVISIONING_PROFILE_SPECIFIER="YourProvisioningProfileName"
+    artifacts:
+      - build/GlucoseDirect.xcarchive
 publishing:
   app_store_connect:
     submit_to_testflight: true
